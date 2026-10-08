@@ -1,0 +1,163 @@
+@import "tailwindcss";
+
+@theme {
+  --font-heading: 'Poppins', sans-serif;
+  --font-serif: 'Poppins', sans-serif;
+  --font-sans: 'Poppins', 'Plus Jakarta Sans', sans-serif;
+}
+
+@layer base {
+  :root {
+    --gold: #B38738;
+    --gold-light: #FBF6ED;
+    --gold-dark: #946820;
+    --obsidian: #141210;
+    --ocean-deep: #141210;
+    --ocean-surface: #1E1B18;
+    --ocean-abyss: #0B0A09;
+  }
+
+  body {
+    font-family: 'Poppins', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #141210;
+    overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* Ultra-bold, punchy typography across the entire page (matching the LYFADS visual design reference) */
+  h1, h2, h3, h4, h5, h6, .font-heading, .font-serif, .font-editorial {
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+  }
+
+  h1 {
+    font-weight: 900;
+    letter-spacing: -0.045em;
+  }
+
+  h2 {
+    font-weight: 800;
+    letter-spacing: -0.035em;
+  }
+
+  h3 {
+    font-weight: 800;
+    letter-spacing: -0.025em;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+.theme-dark ::-webkit-scrollbar-track {
+  background: #141210;
+}
+::-webkit-scrollbar-thumb {
+  background: #B3873880;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #946820CC;
+}
+
+/* Glassmorphism helpers - Adaptive for White & Dark Themes */
+.theme-light .glass-panel {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(179, 135, 56, 0.25);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 0 15px rgba(179, 135, 56, 0.08);
+}
+
+.theme-dark .glass-panel {
+  background: rgba(20, 18, 16, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(179, 135, 56, 0.2);
+}
+
+.theme-light .glass-panel-subtle {
+  background: rgba(251, 246, 237, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(179, 135, 56, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.theme-dark .glass-panel-subtle {
+  background: rgba(20, 18, 16, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, #C89B48 0%, #B38738 50%, #946820 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.theme-dark .gold-gradient-text {
+  background: linear-gradient(135deg, #FFF5E6 0%, #B38738 50%, #946820 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Luxury animation keyframes */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+.animate-shimmer {
+  animation: shimmer 2.5s infinite;
+}
+
+/* Float animation for perfume bottle showcase */
+@keyframes luxuryFloat {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-16px) rotate(1.5deg);
+  }
+}
+
+.animate-luxury-float {
+  animation: luxuryFloat 6s ease-in-out infinite;
+}
+
+/* Slow ambient rotation */
+@keyframes slowRotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-slow-rotate {
+  animation: slowRotate 25s linear infinite;
+}
+
+/* Pulse glow aura */
+@keyframes auraPulse {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.08);
+  }
+}
+
+.animate-aura-pulse {
+  animation: auraPulse 4s ease-in-out infinite;
+}
