@@ -2,11 +2,11 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 
 /**
  * Custom hook to pre-cache image frames and sync canvas render with scroll progress.
- * Configured for the 240 extracted frames at /frames/ezgif-frame-[001-240].jpg
+ * Configured for the complete 192 high-clarity frames at /Perfume_bottle_drops/frame_[001-192].jpg
  */
 export const useImageSequence = ({
-  totalFrames = 240,
-  framePrefix = '/frames/ezgif-frame-',
+  totalFrames = 192,
+  framePrefix = '/Perfume_bottle_drops/frame_',
   extension = '.jpg',
   padLength = 3
 } = {}) => {
@@ -17,7 +17,7 @@ export const useImageSequence = ({
 
   // Generate frame image URL
   const getFrameUrl = useCallback((index) => {
-    // 1-indexed frames (001 to 240)
+    // 1-indexed frames (001 to 192)
     const frameNum = Math.min(Math.max(1, index + 1), totalFrames);
     const padded = String(frameNum).padStart(padLength, '0');
     return `${framePrefix}${padded}${extension}`;
@@ -28,7 +28,7 @@ export const useImageSequence = ({
     const images = new Array(totalFrames);
     let loaded = 0;
 
-    // Priority batch: load first 20 frames immediately for instantaneous initial playback
+    // Priority batch: load first 20 frames immediately for instant playback
     const PRIORITY_COUNT = Math.min(20, totalFrames);
     for (let i = 0; i < PRIORITY_COUNT; i++) {
       const img = new Image();
@@ -37,7 +37,7 @@ export const useImageSequence = ({
         if (isCancelled) return;
         loaded++;
         setLoadedCount(loaded);
-        if (loaded >= 8) {
+        if (loaded >= 4) {
           setIsReady(true);
         }
       };
@@ -70,11 +70,11 @@ export const useImageSequence = ({
         images[i] = img;
       }
       if (endIndex < totalFrames) {
-        idleTimer = setTimeout(() => loadNextChunk(endIndex, chunkSize), 80);
+        idleTimer = setTimeout(() => loadNextChunk(endIndex, chunkSize), 35);
       }
     };
 
-    idleTimer = setTimeout(() => loadNextChunk(PRIORITY_COUNT, 25), 150);
+    idleTimer = setTimeout(() => loadNextChunk(PRIORITY_COUNT, 20), 50);
 
     imagesRef.current = images;
 

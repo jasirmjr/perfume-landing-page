@@ -12,6 +12,7 @@ export const HeroCanvas = ({
   progressPercent
 }) => {
   const canvasRef = useRef(null);
+  const lastDrawnImgRef = useRef(null);
   const { theme } = useCart();
   const isLight = theme === 'light';
 
@@ -36,47 +37,48 @@ export const HeroCanvas = ({
       ctx.save();
       ctx.scale(dpr, dpr);
 
-      // Check current frame image
-      const img = images[currentFrameIndex];
+      // Current target frame or fallback to last successfully drawn frame for continuous fluid rendering
+      let imgToDraw = images[currentFrameIndex];
+      if (imgToDraw && imgToDraw.complete && imgToDraw.naturalWidth > 0) {
+        lastDrawnImgRef.current = imgToDraw;
+      } else if (lastDrawnImgRef.current) {
+        imgToDraw = lastDrawnImgRef.current;
+      }
 
-      if (img && img.complete && img.naturalWidth > 0) {
-        // Draw image cover
-        const hRatio = width / img.naturalWidth;
-        const vRatio = height / img.naturalHeight;
+      if (imgToDraw && imgToDraw.complete && imgToDraw.naturalWidth > 0) {
+        // Draw image cover with maximum sharpness and correct aspect ratio
+        const hRatio = width / imgToDraw.naturalWidth;
+        const vRatio = height / imgToDraw.naturalHeight;
         const ratio = Math.max(hRatio, vRatio);
 
-        const centerShiftX = (width - img.naturalWidth * ratio) / 2;
-        const centerShiftY = (height - img.naturalHeight * ratio) / 2;
+        const centerShiftX = (width - imgToDraw.naturalWidth * ratio) / 2;
+        const centerShiftY = (height - imgToDraw.naturalHeight * ratio) / 2;
 
         ctx.clearRect(0, 0, width, height);
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
         ctx.drawImage(
-          img,
+          imgToDraw,
           0,
           0,
-          img.naturalWidth,
-          img.naturalHeight,
+          imgToDraw.naturalWidth,
+          imgToDraw.naturalHeight,
           centerShiftX,
           centerShiftY,
-          img.naturalWidth * ratio,
-          img.naturalHeight * ratio
+          imgToDraw.naturalWidth * ratio,
+          imgToDraw.naturalHeight * ratio
         );
-
-        if (isLight) {
-          // Soft luxury pearl white atmospheric tint over image frames for clean white aesthetic
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.12)';
-          ctx.fillRect(0, 0, width, height);
-        }
       } else {
-        // Fallback gradient while frames load
+        // Fallback gradient while initial frames stream in
         const grad = ctx.createLinearGradient(0, 0, 0, height);
         if (isLight) {
           grad.addColorStop(0, '#FFFFFF');
-          grad.addColorStop(0.5, '#F1F5F9');
-          grad.addColorStop(1, '#E2E8F0');
+          grad.addColorStop(0.5, '#FBF6ED');
+          grad.addColorStop(1, '#F3EAD8');
         } else {
-          grad.addColorStop(0, '#050D1A');
-          grad.addColorStop(0.5, '#0A192F');
-          grad.addColorStop(1, '#020710');
+          grad.addColorStop(0, '#0D0B09');
+          grad.addColorStop(0.5, '#141210');
+          grad.addColorStop(1, '#050D1A');
         }
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, width, height);
@@ -84,25 +86,25 @@ export const HeroCanvas = ({
         // Subtle shimmering circular halo
         ctx.beginPath();
         ctx.arc(width / 2, height / 2, Math.min(width, height) * 0.25, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(212, 175, 55, 0.08)';
+        ctx.fillStyle = 'rgba(179, 135, 56, 0.08)';
         ctx.fill();
       }
 
-      // Add delicate cinematic vignette adapted to theme
+      // Add delicate cinematic vignette adapted to theme for luxury editorial feel
       const vignette = ctx.createRadialGradient(
         width / 2,
         height / 2,
-        Math.min(width, height) * 0.35,
+        Math.min(width, height) * 0.45,
         width / 2,
         height / 2,
-        Math.max(width, height) * 0.8
+        Math.max(width, height) * 0.85
       );
       if (isLight) {
         vignette.addColorStop(0, 'rgba(255, 255, 255, 0)');
-        vignette.addColorStop(1, 'rgba(255, 255, 255, 0.4)');
+        vignette.addColorStop(1, 'rgba(255, 255, 255, 0.2)');
       } else {
-        vignette.addColorStop(0, 'rgba(5, 13, 26, 0)');
-        vignette.addColorStop(1, 'rgba(5, 13, 26, 0.6)');
+        vignette.addColorStop(0, 'rgba(13, 11, 9, 0)');
+        vignette.addColorStop(1, 'rgba(13, 11, 9, 0.65)');
       }
       ctx.fillStyle = vignette;
       ctx.fillRect(0, 0, width, height);
@@ -126,7 +128,7 @@ export const HeroCanvas = ({
   return (
     <div
       className={`fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden ${
-        isLight ? 'bg-white' : 'bg-[#050D1A]'
+        isLight ? 'bg-white' : 'bg-[#0D0B09]'
       }`}
     >
       <canvas
@@ -139,29 +141,29 @@ export const HeroCanvas = ({
       {!isReady && (
         <div
           className={`absolute inset-0 flex flex-col items-center justify-center backdrop-blur-md z-10 ${
-            isLight ? 'bg-white/90' : 'bg-[#050D1A]/90'
+            isLight ? 'bg-white/90' : 'bg-[#0D0B09]/90'
           }`}
         >
-          <div className="w-16 h-16 rounded-full border border-[#D4AF37]/40 border-t-[#D4AF37] animate-spin mb-6" />
-          <p className="text-[#D4AF37] font-serif tracking-[0.25em] text-lg uppercase font-medium">
+          <div className="w-16 h-16 rounded-full border border-[#B38738]/40 border-t-[#B38738] animate-spin mb-6" />
+          <p className="text-[#B38738] font-serif tracking-[0.25em] text-lg uppercase font-medium">
             Synthesizing Oceanic Essence
           </p>
           <div
             className={`w-48 h-1 rounded-full mt-4 overflow-hidden ${
-              isLight ? 'bg-slate-200' : 'bg-white/10'
+              isLight ? 'bg-stone-200' : 'bg-white/10'
             }`}
           >
             <div
-              className="h-full bg-[#D4AF37] transition-all duration-300"
+              className="h-full bg-[#B38738] transition-all duration-300"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
           <span
             className={`text-xs tracking-widest mt-2 ${
-              isLight ? 'text-slate-500' : 'text-white/50'
+              isLight ? 'text-stone-500' : 'text-white/50'
             }`}
           >
-            {progressPercent}% DEEP SEA FRAMES LOADED
+            {progressPercent}% ESSENCE FRAMES LOADED
           </span>
         </div>
       )}

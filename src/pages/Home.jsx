@@ -12,7 +12,7 @@ export const Home = ({ onNavigate, onSelectProduct }) => {
   const [scrollProgress, setScrollProgress] = useState(0);
   const { addToCart } = useCart();
 
-  // Load the 240 extracted frames from ezgif
+  // Load the full 192 high-clarity frames from Perfume_bottle_drops
   const {
     images,
     isReady,
@@ -20,8 +20,8 @@ export const Home = ({ onNavigate, onSelectProduct }) => {
     currentFrameIndex,
     setFrameByProgress
   } = useImageSequence({
-    totalFrames: 240,
-    framePrefix: '/frames/ezgif-frame-',
+    totalFrames: 192,
+    framePrefix: '/Perfume_bottle_drops/frame_',
     extension: '.jpg',
     padLength: 3
   });
