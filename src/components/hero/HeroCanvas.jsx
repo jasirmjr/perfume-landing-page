@@ -69,45 +69,9 @@ export const HeroCanvas = ({
           imgToDraw.naturalHeight * ratio
         );
       } else {
-        // Fallback gradient while initial frames stream in
-        const grad = ctx.createLinearGradient(0, 0, 0, height);
-        if (isLight) {
-          grad.addColorStop(0, '#FFFFFF');
-          grad.addColorStop(0.5, '#FBF6ED');
-          grad.addColorStop(1, '#F3EAD8');
-        } else {
-          grad.addColorStop(0, '#0D0B09');
-          grad.addColorStop(0.5, '#141210');
-          grad.addColorStop(1, '#050D1A');
-        }
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, width, height);
-
-        // Subtle shimmering circular halo
-        ctx.beginPath();
-        ctx.arc(width / 2, height / 2, Math.min(width, height) * 0.25, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(179, 135, 56, 0.08)';
-        ctx.fill();
+        // Transparent while first canvas frame compiles so the eager underlying frame_001.jpg displays directly
+        ctx.clearRect(0, 0, width, height);
       }
-
-      // Add delicate cinematic vignette adapted to theme for luxury editorial feel
-      const vignette = ctx.createRadialGradient(
-        width / 2,
-        height / 2,
-        Math.min(width, height) * 0.45,
-        width / 2,
-        height / 2,
-        Math.max(width, height) * 0.85
-      );
-      if (isLight) {
-        vignette.addColorStop(0, 'rgba(255, 255, 255, 0)');
-        vignette.addColorStop(1, 'rgba(255, 255, 255, 0.2)');
-      } else {
-        vignette.addColorStop(0, 'rgba(13, 11, 9, 0)');
-        vignette.addColorStop(1, 'rgba(13, 11, 9, 0.65)');
-      }
-      ctx.fillStyle = vignette;
-      ctx.fillRect(0, 0, width, height);
 
       ctx.restore();
     };
@@ -123,50 +87,25 @@ export const HeroCanvas = ({
       window.removeEventListener('resize', handleResize);
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
     };
-  }, [images, currentFrameIndex, isLight]);
+  }, [images, currentFrameIndex]);
 
   return (
-    <div
-      className={`fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden ${
-        isLight ? 'bg-white' : 'bg-[#0D0B09]'
-      }`}
-    >
-      <canvas
-        ref={canvasRef}
-        className="w-full h-full object-cover block"
-        style={{ width: '100vw', height: '100vh' }}
+    <div className="fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden bg-white">
+      {/* Direct Eager Landing Image - displays immediately on load with zero delay */}
+      <img
+        src="/Perfume_bottle_drops/frame_001.jpg"
+        alt="AURA Haute Parfumerie Flacon"
+        className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none"
+        loading="eager"
+        fetchPriority="high"
       />
 
-      {/* Loading Skeleton Indicator */}
-      {!isReady && (
-        <div
-          className={`absolute inset-0 flex flex-col items-center justify-center backdrop-blur-md z-10 ${
-            isLight ? 'bg-white/90' : 'bg-[#0D0B09]/90'
-          }`}
-        >
-          <div className="w-16 h-16 rounded-full border border-[#B38738]/40 border-t-[#B38738] animate-spin mb-6" />
-          <p className="text-[#B38738] font-serif tracking-[0.25em] text-lg uppercase font-medium">
-            Synthesizing Oceanic Essence
-          </p>
-          <div
-            className={`w-48 h-1 rounded-full mt-4 overflow-hidden ${
-              isLight ? 'bg-stone-200' : 'bg-white/10'
-            }`}
-          >
-            <div
-              className="h-full bg-[#B38738] transition-all duration-300"
-              style={{ width: `${progressPercent}%` }}
-            />
-          </div>
-          <span
-            className={`text-xs tracking-widest mt-2 ${
-              isLight ? 'text-stone-500' : 'text-white/50'
-            }`}
-          >
-            {progressPercent}% ESSENCE FRAMES LOADED
-          </span>
-        </div>
-      )}
+      {/* Scrubbing Canvas Engine on top */}
+      <canvas
+        ref={canvasRef}
+        className="relative w-full h-full object-cover block"
+        style={{ width: '100vw', height: '100vh' }}
+      />
     </div>
   );
 };

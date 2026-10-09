@@ -67,8 +67,6 @@ export const Home = ({ onNavigate, onSelectProduct }) => {
         <HeroCanvas
           images={images}
           currentFrameIndex={currentFrameIndex}
-          isReady={isReady}
-          progressPercent={progressPercent}
         />
 
         {/* Narrative editorial overlay texts mapped to chapters (fading cleanly) */}
